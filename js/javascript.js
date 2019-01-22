@@ -127,9 +127,9 @@ $(function () {
         },
         "touch:gesture": function (event) {
             isGestureEvent = true;
-            var lPinchScale = event.self.scale;
-            var scaleDiff = (lPinchScale - 1) / 10 + 1;  // Slow down zoom speed
-            canvas.setZoom(canvas.viewport.zoom * scaleDiff);
+            let lPinchScale = event.self.scale;
+            let scaleDiff = (lPinchScale - 1) / 10 + 1;  // Slow down zoom speed
+            this.setZoom(self.viewport.zoom * scaleDiff);
         },
         "mouse:wheel": function (opt) {
             const delta = opt.e.deltaY;
