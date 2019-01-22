@@ -54,7 +54,7 @@ $(function () {
 
     function createCircle(x, y, msg) {
         const radius = currentImage.width / 50;
-        const circle = new fabric.Circle({radius: radius, left: x, top: y, fill: "green", hasControls: false});
+        const circle = new fabric.Circle({radius: radius, left: x, top: y, fill: "magenta", stroke: "orange", strokeWidth: radius / 10, hasControls: false});
         const temp = {circle: circle, text: msg};
         circle.on("selected", function () {
             selected = temp;
@@ -100,7 +100,7 @@ $(function () {
 
     editor_canvas.on("mouse:out", function (e) {
         if (e.target) {
-            e.target.set("fill", "green");
+            e.target.set("fill", "magenta");
             if (selected)
                 $("#input_input").val(selected.text);
             this.renderAll();
@@ -134,6 +134,43 @@ $(function () {
         if (panning && e && e.e) {
             const delta = new fabric.Point(e.e.movementX, e.e.movementY);
             this.relativePan(delta);
+        }
+    });
+
+    canvas.on({
+        'touch:gesture': function(e) {
+            if (e.e.touches && e.e.touches.length === 2) {
+                pausePanning = true;
+                var point = new fabric.Point(e.self.x, e.self.y);
+                if (e.self.state === "start") {
+                    zoomStartScale = self.canvas.getZoom();
+                }
+                var delta = zoomStartScale * e.self.scale;
+                self.canvas.zoomToPoint(point, delta);
+                pausePanning = false;
+            }
+        },
+        'object:selected': function() {
+            pausePanning = true;
+        },
+        'selection:cleared': function() {
+            pausePanning = false;
+        },
+        'touch:drag': function(e) {
+            if (pausePanning === false && undefined !== e.e.layerX && undefined !== e.e.layerY) {
+                currentX = e.e.layerX;
+                currentY = e.e.layerY;
+                xChange = currentX - lastX;
+                yChange = currentY - lastY;
+
+                if( (Math.abs(currentX - lastX) <= 50) && (Math.abs(currentY - lastY) <= 50)) {
+                    var delta = new fabric.Point(xChange, yChange);
+                    canvas.relativePan(delta);
+                }
+
+                lastX = e.e.layerX;
+                lastY = e.e.layerY;
+            }
         }
     });
 
