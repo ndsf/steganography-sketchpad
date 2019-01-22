@@ -125,35 +125,6 @@ $(function () {
                 this.relativePan(delta);
             }
         },
-        /*"touch:gesture": function (event) {
-            isGestureEvent = true;
-            let lPinchScale = event.self.scale;
-            let scaleDiff = (lPinchScale - 1) / 10 + 1;  // Slow down zoom speed
-            this.setZoom(self.viewport.zoom * scaleDiff);
-
-            const delta = opt.e.deltaY;
-            let zoom = this.getZoom();
-            zoom = zoom + delta / 200;
-            if (zoom > 2) zoom = 2;
-            if (zoom < 0.1) zoom = 0.1;
-            this.zoomToPoint({x: opt.e.offsetX, y: opt.e.offsetY}, zoom);
-            opt.e.preventDefault();
-            opt.e.stopPropagation();
-        },*/
-        'touch:gesture': function(e) {
-            console.log(e);
-            if (e.e.touches && e.e.touches.length === 2) {
-                //pausePanning = true;
-                var zoomStartScale = 0;
-                var point = new fabric.Point(e.self.x, e.self.y);
-                if (e.self.state === "start") {
-                    zoomStartScale = self.canvas.getZoom();
-                }
-                var delta = zoomStartScale * e.self.scale;
-                self.canvas.zoomToPoint(point, delta);
-                //pausePanning = false;
-            }
-        },
         "mouse:wheel": function (opt) {
             const delta = opt.e.deltaY;
             let zoom = this.getZoom();
