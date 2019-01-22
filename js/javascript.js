@@ -141,6 +141,7 @@ $(function () {
             opt.e.stopPropagation();
         },*/
         'touch:gesture': function(e) {
+            console.log(e);
             if (e.e.touches && e.e.touches.length === 2) {
                 //pausePanning = true;
                 var zoomStartScale = 0;
