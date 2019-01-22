@@ -1,4 +1,5 @@
 $(function () {
+    let currentImage = null;
     let panning = false;
     let circles = [];
     let selected = null;
@@ -8,6 +9,8 @@ $(function () {
         clearTimeout(window.resizedFinished);
         window.resizedFinished = setTimeout(function () {
             resizeCanvas();
+            if (currentImage)
+                zoomToFitCanvas(0, 0, currentImage.width, currentImage.height);
         }, 250);
     });
 
@@ -19,12 +22,21 @@ $(function () {
         editor_canvas.renderAll();
     }
 
+    const tutorial = new fabric.Image("tutorial_img");
+    editor_canvas.setBackgroundImage(tutorial, editor_canvas.renderAll.bind(editor_canvas), {
+        originX: "left",
+        originY: "top"
+    });
+    zoomToFitCanvas(0, 0, tutorial.width, tutorial.height);
+
     $("#upload_link").on("click", function (e) {
         e.preventDefault();
         $("#file").trigger("click");
     });
 
     $("#file").on("change", function () {
+        circles = [];
+        selected = null;
         editor_canvas.clear();
         const img = new Image();
         img.onload = function () {
@@ -34,6 +46,7 @@ $(function () {
                 originY: "top"
             });
             zoomToFitCanvas(0, 0, img.width, img.height);
+            currentImage = img;
         };
         img.src = URL.createObjectURL(this.files[0]);
         readIMG();
@@ -101,11 +114,11 @@ $(function () {
     });
 
     function zoomToFitCanvas(minX, minY, maxX, maxY) {
-        console.log(minX, minY, maxX, maxY);
         const panX = (maxX - minX - editor_canvas.width) / 2 + minX;
         const panY = (maxY - minY - editor_canvas.height) / 2 + minY;
         editor_canvas.absolutePan({x: panX, y: panY});
-
+        editor_canvas.viewportTransform[0] = editor_canvas.viewportTransform[3] = 1;
+        editor_canvas.viewportTransform[1] = editor_canvas.viewportTransform[2] = 0;
         const zoom = Math.min(editor_canvas.width / (maxX - minX), editor_canvas.height / (maxY - minY));
         const zoomPoint = new fabric.Point(editor_canvas.width / 2, editor_canvas.height / 2);
         editor_canvas.zoomToPoint(zoomPoint, zoom);
@@ -181,9 +194,7 @@ $(function () {
                 t = t.split("<").join("&lt;");
                 t = t.split(">").join("&gt;");
                 t = t.replace(/(?:\r\n|\r|\n)/g, "<br />");
-                console.log("t=" + t);
                 const result = JSON.parse(t);
-                console.log(result.length);
                 for (let i = 0; i < result.length; i++) {
                     const temp = createCircle(result[i].x, result[i].y, result[i].text);
                     editor_canvas.add(temp.circle);

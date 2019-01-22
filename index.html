@@ -9,9 +9,8 @@
     <title>Steganography sketchpad</title>
 </head>
 <body class="bg-light">
-<div class="container">
+<div class="container-fluid no-padding">
     <nav class="navbar fixed-top navbar-expand navbar-light bg-light">
-        <a class="navbar-brand" href="#">Steganography sketchpad</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar_top"
                 aria-controls="navbar_top" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
@@ -28,11 +27,14 @@
                 <a id="build_button" class="nav-item nav-link" href="#" data-toggle="modal" data-target="#exampleModal">Generate</a>
             </div>
         </div>
+        <a class="navbar-brand" href="#">Steganography sketchpad</a>
     </nav>
 
     <div id="editor_canvas_div" class="row">
         <canvas id="editor_canvas"></canvas>
     </div>
+
+    <img id="tutorial_img" src="tutorial.svg" style="display: none">
 
     <nav class="navbar fixed-bottom navbar-expand navbar-light bg-light">
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar_bottom"
@@ -40,7 +42,7 @@
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbar_bottom">
-            <input id="input_input" class="form-control mr-sm-2" placeholder="Hover over the circles to show tooltip. Hold alt to drag around. Use the mouse wheel to zoom." autocomplete="off">
+            <input id="input_input" class="form-control mr-sm-2" placeholder="Modify the selected element here" autocomplete="off">
         </div>
     </nav>
 
