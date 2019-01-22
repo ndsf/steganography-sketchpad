@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Demo</title>
+    <style>
+        #editor_canvas {
+
+            background-repeat: no-repeat;
+            background-size: contain;
+            background-position: center;
+        }
+
+        #str_p {
+            display: none;
+        }
+
+        #result {
+            display: none;
+        }
+
+        #result_div {
+            display: none;
+        }
+    </style>
+</head>
+<body class="bg-light">
+<div class="container">
+    <header class="py-5 text-center">
+        <h1>Demo</h1>
+        <p class="lead">Just a simple demo.</p>
+    </header>
+    <article>
+        <section>
+            <h4>Step 1. Upload an image.</h4>
+            <p><input type="file" id="file" accept="image/*"/></p>
+        </section>
+        <hr>
+        <section>
+            <h4>Step 2. Edit the image.</h4>
+            <p>
+                <button id="clear_button" class="btn btn-primary">Clear</button>
+                <button id="add_button" class="btn btn-primary">Add</button>
+                <button id="remove_button" class="btn btn-primary">Remove</button>
+            </p>
+            <div id="editor_canvas_div" class="row">
+                <canvas width="300" height="300" id="editor_canvas"></canvas>
+            </div>
+            <div id="tooltip_div" class="alert alert-info alert-dismissable">
+                Hover over the circles to show tooltip. Hold alt to drag around. Use the mouse wheel to zoom.
+            </div>
+            <p><label for="input_input">Set the text for selected circle.</label></p>
+            <input id="input_input" class="form-control"></input>
+        </section>
+
+        <p id="str_p"></p>
+
+        <section>
+            <h4>Step 3. Hide the string in the image.</h4>
+            <button id="build_button" class="btn btn-primary">Build</button>
+            <div id="result_div">
+                <p>Click the image to download.</p>
+                <a id="result_download" download="" href="" title="Image">
+                    <img id="resultimg" src=""/>
+                </a>
+            </div>
+            <div id="result"></div>
+        </section>
+        <!--<hr>
+        <section>
+            <h4>Step 4. Read the string in the image.</h4>
+            <button id="read_button" class="btn btn-primary">Read</button>
+        </section>-->
+    </article>
+    <footer class="my-5 pt-5 text-muted text-center text-small">
+        <p class="mb-1">&copy; Demo</p>
+        <ul class="list-inline">
+            <li class="list-inline-item"><a href="#">Privacy</a></li>
+            <li class="list-inline-item"><a href="#">Terms</a></li>
+            <li class="list-inline-item"><a href="#">Support</a></li>
+        </ul>
+    </footer>
+</div>
+<script src="js/jquery-3.3.1.min.js"></script>
+<script src="js/cryptostego.min.js"></script>
+<script src="js/bootstrap.js"></script>
+<script src="js/fabric.min.js"></script>
+<script src="js/javascript.js"></script>
+</body>
+</html>
