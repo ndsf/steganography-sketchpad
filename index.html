@@ -4,84 +4,69 @@
     <link rel="stylesheet" href="css/bootstrap.min.css">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>Demo</title>
-    <style>
-        #editor_canvas {
-
-            background-repeat: no-repeat;
-            background-size: contain;
-            background-position: center;
-        }
-
-        #str_p {
-            display: none;
-        }
-
-        #result {
-            display: none;
-        }
-
-        #result_div {
-            display: none;
-        }
-    </style>
+    <meta name="description" content="A sketchpad that generates a picture with hidden information at given spots.">
+    <meta name="author" content="ndsf">
+    <title>Steganography sketchpad</title>
 </head>
 <body class="bg-light">
 <div class="container">
-    <header class="py-5 text-center">
-        <h1>Demo</h1>
-        <p class="lead">Just a simple demo.</p>
-    </header>
-    <article>
-        <section>
-            <h4>Step 1. Upload an image.</h4>
-            <p><input type="file" id="file" accept="image/*"/></p>
-        </section>
-        <hr>
-        <section>
-            <h4>Step 2. Edit the image.</h4>
-            <p>
-                <button id="clear_button" class="btn btn-primary">Clear</button>
-                <button id="add_button" class="btn btn-primary">Add</button>
-                <button id="remove_button" class="btn btn-primary">Remove</button>
-            </p>
-            <div id="editor_canvas_div" class="row">
-                <canvas width="300" height="300" id="editor_canvas"></canvas>
-            </div>
-            <div id="tooltip_div" class="alert alert-info alert-dismissable">
-                Hover over the circles to show tooltip. Hold alt to drag around. Use the mouse wheel to zoom.
-            </div>
-            <p><label for="input_input">Set the text for selected circle.</label></p>
-            <input id="input_input" class="form-control"></input>
-        </section>
-
-        <p id="str_p"></p>
-
-        <section>
-            <h4>Step 3. Hide the string in the image.</h4>
-            <button id="build_button" class="btn btn-primary">Build</button>
-            <div id="result_div">
-                <p>Click the image to download.</p>
-                <a id="result_download" download="" href="" title="Image">
-                    <img id="resultimg" src=""/>
+    <nav class="navbar fixed-top navbar-expand navbar-light bg-light">
+        <a class="navbar-brand" href="#">Steganography sketchpad</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar_top"
+                aria-controls="navbar_top" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbar_top">
+            <div class="navbar-nav">
+                <input type="file" id="file" style="display: none" accept="image/*"/>
+                <a id="upload_link" class="nav-item nav-link" href="#">
+                    Open
                 </a>
+                <a id="clear_button" class="nav-item nav-link" href="#">Clear</a>
+                <a id="add_button" class="nav-item nav-link" href="#">Add</a>
+                <a id="remove_button" class="nav-item nav-link" href="#">Remove</a>
+                <a id="build_button" class="nav-item nav-link" href="#" data-toggle="modal" data-target="#exampleModal">Generate</a>
             </div>
-            <div id="result"></div>
-        </section>
-        <!--<hr>
-        <section>
-            <h4>Step 4. Read the string in the image.</h4>
-            <button id="read_button" class="btn btn-primary">Read</button>
-        </section>-->
-    </article>
-    <footer class="my-5 pt-5 text-muted text-center text-small">
-        <p class="mb-1">&copy; Demo</p>
-        <ul class="list-inline">
-            <li class="list-inline-item"><a href="#">Privacy</a></li>
-            <li class="list-inline-item"><a href="#">Terms</a></li>
-            <li class="list-inline-item"><a href="#">Support</a></li>
-        </ul>
-    </footer>
+        </div>
+    </nav>
+
+    <div id="editor_canvas_div" class="row">
+        <canvas id="editor_canvas"></canvas>
+    </div>
+
+    <nav class="navbar fixed-bottom navbar-expand navbar-light bg-light">
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar_bottom"
+                aria-controls="navbar_bottom" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbar_bottom">
+            <input id="input_input" class="form-control mr-sm-2" placeholder="Hover over the circles to show tooltip. Hold alt to drag around. Use the mouse wheel to zoom." autocomplete="off">
+        </div>
+    </nav>
+
+    <!-- Download Modal -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Click the image to download</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p id="str_p" style="display: none">str_p</p>
+                    <a id="result_download" download="" href="" title="Image">
+                        <img id="resultimg" class="img-thumbnail" src="" alt=""/>
+                    </a>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 <script src="js/jquery-3.3.1.min.js"></script>
 <script src="js/cryptostego.min.js"></script>
