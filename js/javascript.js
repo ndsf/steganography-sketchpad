@@ -5,13 +5,15 @@ $(function () {
     let selected = null;
     const editor_canvas = new fabric.Canvas("editor_canvas");
 
-    $(window).on("resize", function () {
-        clearTimeout(window.resizedFinished);
-        window.resizedFinished = setTimeout(function () {
-            resizeCanvas();
-            if (currentImage)
-                zoomToFitCanvas(0, 0, currentImage.width, currentImage.height);
-        }, 250);
+    $(window).on({
+        "resize": function () {
+            clearTimeout(window.resizedFinished);
+            window.resizedFinished = setTimeout(function () {
+                resizeCanvas();
+                if (currentImage)
+                    zoomToFitCanvas(0, 0, currentImage.width, currentImage.height);
+            }, 250);
+        }
     });
 
     resizeCanvas();
@@ -29,81 +31,69 @@ $(function () {
     });
     zoomToFitCanvas(0, 0, tutorial.width, tutorial.height);
 
-    $("#upload_link").on("click", function (e) {
-        e.preventDefault();
-        $("#file").trigger("click");
+    $("#upload_link").on({
+        "click": function (e) {
+            e.preventDefault();
+            $("#file").trigger("click");
+        }
     });
 
-    $("#file").on("change", function () {
-        circles = [];
-        selected = null;
-        editor_canvas.clear();
-        const img = new Image();
-        img.onload = function () {
-            const image = new fabric.Image(this);
-            editor_canvas.setBackgroundImage(image, editor_canvas.renderAll.bind(editor_canvas), {
-                originX: "left",
-                originY: "top"
-            });
-            zoomToFitCanvas(0, 0, img.width, img.height);
-            currentImage = img;
-        };
-        img.src = URL.createObjectURL(this.files[0]);
-        readIMG();
+    $("#file").on({
+        "change": function () {
+            circles = [];
+            selected = null;
+            editor_canvas.clear();
+            const img = new Image();
+            img.onload = function () {
+                const image = new fabric.Image(this);
+                editor_canvas.setBackgroundImage(image, editor_canvas.renderAll.bind(editor_canvas), {
+                    originX: "left",
+                    originY: "top"
+                });
+                zoomToFitCanvas(0, 0, img.width, img.height);
+                currentImage = img;
+            };
+            img.src = URL.createObjectURL(this.files[0]);
+            readIMG();
+        }
     });
 
     function createCircle(x, y, msg) {
         const radius = currentImage.width / 50;
-        const circle = new fabric.Circle({radius: radius, left: x, top: y, fill: "magenta", stroke: "orange", strokeWidth: radius / 10, hasControls: false});
+        const circle = new fabric.Circle({
+            radius: radius,
+            left: x,
+            top: y,
+            fill: "magenta",
+            stroke: "orange",
+            strokeWidth: radius / 10,
+            hasControls: false
+        });
         const temp = {circle: circle, text: msg};
-        circle.on("selected", function () {
-            selected = temp;
-            $("#input_input").val(temp.text);
+        circle.on({
+            "selected": function () {
+                selected = temp;
+                $("#input_input").val(temp.text);
+            }
         });
         return temp;
     }
 
-    $("#add_button").on("click", function () {
-        const temp = createCircle(editor_canvas.width * (0.3 + Math.random() * 0.4), editor_canvas.height * (0.3 + Math.random() * 0.4), "");
-        editor_canvas.add(temp.circle);
-        circles.push(temp);
-    });
-
-    $("#remove_button").on("click", function () {
-        for (let i = 0; i < circles.length; i++)
-            if (circles[i].circle === editor_canvas.getActiveObject())
-                circles.splice(i, 1);
-        selected = null;
-        editor_canvas.remove(editor_canvas.getActiveObject());
-    });
-
-    editor_canvas.on("mouse:wheel", function (opt) {
-        const delta = opt.e.deltaY;
-        let zoom = this.getZoom();
-        zoom = zoom + delta / 200;
-        if (zoom > 2) zoom = 2;
-        if (zoom < 0.1) zoom = 0.1;
-        this.zoomToPoint({x: opt.e.offsetX, y: opt.e.offsetY}, zoom);
-        opt.e.preventDefault();
-        opt.e.stopPropagation();
-    });
-
-    editor_canvas.on("mouse:over", function (e) {
-        if (e.target) {
-            e.target.set("fill", "red");
-            for (let i = 0; i < circles.length; i++)
-                if (circles[i].circle === e.target)
-                    $("#input_input").val(circles[i].text);
-            this.renderAll();
+    $("#add_button").on({
+        "click": function () {
+            const temp = createCircle(editor_canvas.width * (0.3 + Math.random() * 0.4), editor_canvas.height * (0.3 + Math.random() * 0.4), "");
+            editor_canvas.add(temp.circle);
+            circles.push(temp);
         }
     });
 
-    editor_canvas.on("mouse:out", function (e) {
-        if (e.target) {
-            e.target.set("fill", "magenta");
-            if (selected)
-                $("#input_input").val(selected.text);
-            this.renderAll();
+    $("#remove_button").on({
+        "click": function () {
+            for (let i = 0; i < circles.length; i++)
+                if (circles[i].circle === editor_canvas.getActiveObject())
+                    circles.splice(i, 1);
+            selected = null;
+            editor_canvas.remove(editor_canvas.getActiveObject());
         }
     });
 
@@ -118,78 +108,80 @@ $(function () {
         editor_canvas.zoomToPoint(zoomPoint, zoom);
     }
 
-    editor_canvas.on("mouse:down", function (e) {
-        if (e.e.altKey) {
-            panning = true;
-            this.selection = false;
-        }
-    });
-
-    editor_canvas.on("mouse:up", function () {
-        panning = false;
-        this.selection = true;
-    });
-
-    editor_canvas.on("mouse:move", function (e) {
-        if (panning && e && e.e) {
-            const delta = new fabric.Point(e.e.movementX, e.e.movementY);
-            this.relativePan(delta);
-        }
-    });
-
-    canvas.on({
-        'touch:gesture': function(e) {
-            if (e.e.touches && e.e.touches.length === 2) {
-                pausePanning = true;
-                var point = new fabric.Point(e.self.x, e.self.y);
-                if (e.self.state === "start") {
-                    zoomStartScale = self.canvas.getZoom();
-                }
-                var delta = zoomStartScale * e.self.scale;
-                self.canvas.zoomToPoint(point, delta);
-                pausePanning = false;
+    editor_canvas.on({
+        "mouse:down": function (e) {
+            if (e.e.altKey) {
+                panning = true;
+                this.selection = false;
             }
         },
-        'object:selected': function() {
-            pausePanning = true;
+        "mouse:up": function () {
+            panning = false;
+            this.selection = true;
         },
-        'selection:cleared': function() {
-            pausePanning = false;
+        "mouse:move": function (e) {
+            if (panning && e && e.e) {
+                const delta = new fabric.Point(e.e.movementX, e.e.movementY);
+                this.relativePan(delta);
+            }
         },
-        'touch:drag': function(e) {
-            if (pausePanning === false && undefined !== e.e.layerX && undefined !== e.e.layerY) {
-                currentX = e.e.layerX;
-                currentY = e.e.layerY;
-                xChange = currentX - lastX;
-                yChange = currentY - lastY;
-
-                if( (Math.abs(currentX - lastX) <= 50) && (Math.abs(currentY - lastY) <= 50)) {
-                    var delta = new fabric.Point(xChange, yChange);
-                    canvas.relativePan(delta);
-                }
-
-                lastX = e.e.layerX;
-                lastY = e.e.layerY;
+        "touch:gesture": function (event) {
+            isGestureEvent = true;
+            var lPinchScale = event.self.scale;
+            var scaleDiff = (lPinchScale - 1) / 10 + 1;  // Slow down zoom speed
+            canvas.setZoom(canvas.viewport.zoom * scaleDiff);
+        },
+        "mouse:wheel": function (opt) {
+            const delta = opt.e.deltaY;
+            let zoom = this.getZoom();
+            zoom = zoom + delta / 200;
+            if (zoom > 2) zoom = 2;
+            if (zoom < 0.1) zoom = 0.1;
+            this.zoomToPoint({x: opt.e.offsetX, y: opt.e.offsetY}, zoom);
+            opt.e.preventDefault();
+            opt.e.stopPropagation();
+        },
+        "mouse:over": function (e) {
+            if (e.target) {
+                e.target.set("fill", "red");
+                for (let i = 0; i < circles.length; i++)
+                    if (circles[i].circle === e.target)
+                        $("#input_input").val(circles[i].text);
+                this.renderAll();
+            }
+        },
+        "mouse:out": function (e) {
+            if (e.target) {
+                e.target.set("fill", "magenta");
+                if (selected)
+                    $("#input_input").val(selected.text);
+                this.renderAll();
             }
         }
     });
 
-    $("#input_input").on("input", function () {
-        selected.text = $("#input_input").val();
+    $("#input_input").on({
+        "input": function () {
+            selected.text = $("#input_input").val();
+        }
     });
 
-    $("#build_button").click(function () {
-        const temp = [];
-        for (let i = 0; i < circles.length; i++)
-            temp.push({x: circles[i].circle.left, y: circles[i].circle.top, text: circles[i].text});
-        const str = JSON.stringify(temp);
-        $("#str_p").text(str);
-        writeIMG();
-        $("#result_download").attr("download", new Date());
+    $("#build_button").on({
+        "click": function () {
+            const temp = [];
+            for (let i = 0; i < circles.length; i++)
+                temp.push({x: circles[i].circle.left, y: circles[i].circle.top, text: circles[i].text});
+            const str = JSON.stringify(temp);
+            $("#str_p").text(str);
+            writeIMG();
+            $("#result_download").attr("download", new Date());
+        }
     });
 
-    $("#read_button").click(function () {
-        readIMG();
+    $("#read_button").on({
+        "click": function () {
+            readIMG();
+        }
     });
 
     function writeIMG() {
