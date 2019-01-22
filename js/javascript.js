@@ -1,5 +1,5 @@
 $(function () {
-    let currentImage = null;
+    let currentImage = new fabric.Image("tutorial_img");
     let panning = false;
     let circles = [];
     let selected = null;
@@ -52,14 +52,8 @@ $(function () {
         readIMG();
     });
 
-    $("#clear_button").on("click", function () {
-        circles = [];
-        selected = null;
-        editor_canvas.clear();
-    });
-
     function createCircle(x, y, msg) {
-        const radius = 10;
+        const radius = currentImage.width / 50;
         const circle = new fabric.Circle({radius: radius, left: x, top: y, fill: "green", hasControls: false});
         const temp = {circle: circle, text: msg};
         circle.on("selected", function () {
@@ -70,7 +64,7 @@ $(function () {
     }
 
     $("#add_button").on("click", function () {
-        const temp = createCircle(editor_canvas.width / 2, editor_canvas.height / 2, "");
+        const temp = createCircle(editor_canvas.width * (0.3 + Math.random() * 0.4), editor_canvas.height * (0.3 + Math.random() * 0.4), "");
         editor_canvas.add(temp.circle);
         circles.push(temp);
     });
